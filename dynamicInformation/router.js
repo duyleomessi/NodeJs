@@ -15,27 +15,27 @@ var mimeType = {
 function style(request, response) {
     if (request.url.indexOf('css') != -1) {
         response.writeHead(200, {'content-type': mimeType['css']});
-        renderer.contentType(request.url, response);
+        renderer.contentType('/views' + request.url, response);
         response.end();
     }
     if (request.url.indexOf('js') != -1) {
         response.writeHead(200, {'content-type': mimeType['js']});
-        renderer.contentType(request.url, response);
+        renderer.contentType('/views' + request.url, response);
         response.end();
     }
     if (request.url.indexOf('png') != -1) {
         response.writeHead(200, {'content-type': mimeType['png']});
-        renderer.contentType(request.url, response);
+        renderer.contentType('/views' + request.url, response);
         response.end();
     }
     if (request.url.indexOf('jpg') != -1) {
         response.writeHead(200, {'content-type': mimeType['jpg']});
-        renderer.contentType(request.url, response);
+        renderer.contentType('/views' + request.url, response);
         response.end();
     }
     if (request.url.indexOf('jpeg') != -1) {
         response.writeHead(200, {'content-type': mimeType['jpeg']});
-        renderer.contentType(request.url, response);
+        renderer.contentType('/views' + request.url, response);
         response.end();
     }
 }
@@ -71,40 +71,44 @@ function homeRoute(request, response) {
 //3. Handle HTTP route GET /:username i.e. /chalkers
 
 function userRoute(request, response) {
-    var username = request.url.replace('/', '');
-    if (username.length > 0) {
-        response.writeHead(200, {'content-type': 'text/html'});
-        renderer.view('header', {}, response);
+    if (request.method.toLowerCase() === 'get') {
+        var username = request.url;
+        username = username.substr(1);
 
-        // get json from treehouse
-        var studentProfile = new Profile(username);
+        if (username.length > 0 && username.indexOf('/') == -1) {
+            response.writeHead(200, {'content-type': 'text/html'});
+            renderer.view('header', {}, response);
 
-        // on 'end'
-        studentProfile.on('end', function (profileJSON) {
-            // show profile
+            // get json from treehouse
+            var studentProfile = new Profile(username);
 
-            // Store the values which we need
-            var values = {
-                avatarUrl: profileJSON.gravatar_url,
-                username: profileJSON.profile_name,
-                badges: profileJSON.badges.length,
-                javascriptPoints: profileJSON.points.JavaScript
-            }
+            // on 'end'
+            studentProfile.on('end', function (profileJSON) {
+                // show profile
 
-            // Simple response
-            //response.write(values.username + ' has ' + values.badges + ' badges in total ' + ' and ' + values.javascriptPoints + ' javascript points' + '\n');
-            renderer.view('profile', values, response);
-            renderer.view('footer', {}, response);
-            response.end();
-        });
+                // Store the values which we need
+                var values = {
+                    avatarUrl: profileJSON.gravatar_url,
+                    username: profileJSON.profile_name,
+                    badges: profileJSON.badges.length,
+                    javascriptPoints: profileJSON.points.JavaScript
+                }
 
-        // on 'error'
-        studentProfile.on('error', function (error) {
-            renderer.view('error', {errorMessage: error.message}, response);
-            renderer.view('search', {}, response);
-            renderer.view('footer', {}, response);
-            response.end();
-        })
+                // Simple response
+                //response.write(values.username + ' has ' + values.badges + ' badges in total ' + ' and ' + values.javascriptPoints + ' javascript points' + '\n');
+                renderer.view('profile', values, response);
+                renderer.view('footer', {}, response);
+                response.end();
+            });
+
+            // on 'error'
+            studentProfile.on('error', function (error) {
+                renderer.view('error', {errorMessage: error.message}, response);
+                renderer.view('search', {}, response);
+                renderer.view('footer', {}, response);
+                response.end();
+            })
+        }
     }
 }
 
