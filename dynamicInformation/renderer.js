@@ -3,6 +3,7 @@
 // merge values into string
 
 var fs = require('fs');
+var path = require('path');
 
 function mergerValues(values, content) {
     for (key in values) {
@@ -21,4 +22,10 @@ function view(templateName, values, response) {
     response.write(fileContents);
 }
 
+function contentType(templateName, response) {
+    var fileContents = fs.readFileSync(__dirname + templateName, {encode: 'utf-8'});
+    response.write(fileContents);
+};
+
 module.exports.view = view;
+module.exports.contentType = contentType;

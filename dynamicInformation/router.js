@@ -2,6 +2,44 @@ var Profile = require('./profile');
 var renderer = require('./renderer');
 var querystring = require('querystring');
 
+var mimeType = {
+    'html': 'text/html',
+    'css': 'text/css',
+    'js': 'text/js',
+    'png': 'image/png',
+    'jpg': 'image/jpg',
+    'jpeg': 'image/jpeg'
+}
+
+
+function style(request, response) {
+    if (request.url.indexOf('css') != -1) {
+        response.writeHead(200, {'content-type': mimeType['css']});
+        renderer.contentType(request.url, response);
+        response.end();
+    }
+    if (request.url.indexOf('js') != -1) {
+        response.writeHead(200, {'content-type': mimeType['js']});
+        renderer.contentType(request.url, response);
+        response.end();
+    }
+    if (request.url.indexOf('png') != -1) {
+        response.writeHead(200, {'content-type': mimeType['png']});
+        renderer.contentType(request.url, response);
+        response.end();
+    }
+    if (request.url.indexOf('jpg') != -1) {
+        response.writeHead(200, {'content-type': mimeType['jpg']});
+        renderer.contentType(request.url, response);
+        response.end();
+    }
+    if (request.url.indexOf('jpeg') != -1) {
+        response.writeHead(200, {'content-type': mimeType['jpeg']});
+        renderer.contentType(request.url, response);
+        response.end();
+    }
+}
+
 //2. Handle HTTP route GET / and POST / i.e. Home
 
 function homeRoute(request, response) {
@@ -70,5 +108,6 @@ function userRoute(request, response) {
     }
 }
 
-exports.homeRoute = homeRoute;
-exports.userRoute = userRoute;
+module.exports.homeRoute = homeRoute;
+module.exports.userRoute = userRoute;
+module.exports.style = style;
